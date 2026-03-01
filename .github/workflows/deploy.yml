@@ -1,4 +1,4 @@
-﻿name: Deploy to joshoit.com
+﻿name: Deploy to Hostinger
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy via SSH to Hostinger
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOSTINGER_HOST }}
@@ -18,6 +18,9 @@ jobs:
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           port: ${{ secrets.HOSTINGER_PORT }}
           script: |
-            cd ~/domains/joshoit.com/public_html
+            PROJECT="${{ github.event.repository.name }}"
+            DEPLOY_PATH=~/domains/joshoit.com/public_html/$PROJECT.joshoit.com
+            echo "Deploying to $DEPLOY_PATH"
+            cd $DEPLOY_PATH
             git pull origin main
-            echo "Deployed at $(date)"
+            echo "✅ $PROJECT deployed at $(date)"
